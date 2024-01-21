@@ -15,7 +15,7 @@ Crop diseases pose a significant threat to global food security, especially in r
 ## How it Works ?
 
 - **Image Upload:** Users upload images of plant specimens showing signs of disease through the web interface.
-- **Computer Vision Analysis:** The uploaded images undergo real-time analysis using advanced transfer learning model, enabling the accurate identification of diseases.
+- **Transfer Learning Model:** The uploaded images undergo real-time analysis using advanced transfer learning model, enabling the accurate identification of diseases.
 - **Treatment and Prevention Recommendations:** Once the disease is identified, the web app provides detailed information on suitable treatments and preventive measures, empowering users with actionable insights.
 - **Generative AI Interaction:** Users can engage with generative AI to seek additional information, ask questions, or gain knowledge about plant care beyond disease diagnosis.
 
