@@ -44,6 +44,14 @@ class plantDiseaseQuery:
             "image":aPlant.get_disease_image(identification)
         }
         res = self.plantTable.insert_one(myPlant)
+    
+    def get_plant_id_name(self):
+        result = self.plantTable.find({}, {"plantID": 1, "plantName": 1, "_id": 0})
+        return [(item["plantID"],item["plantName"]) for item in result]
+        
+    def get_plant_by_id(self, plantID):
+        result = self.plantTable.find_one({"plantID": plantID}, {"_id": 0})
+        return result
 
     def get_db_plantID(self):
         result = self.plantTable.find({}, {"plantID": 1, "_id": 0})
@@ -73,7 +81,7 @@ class plantDiseaseQuery:
         result = self.plantTable.find({}, {"diseaseName": 1, "_id": 0})
         return [item["diseaseName"] for item in result]
     
-    def get_db_probability(self):
+    def get_db_description(self):
         result = self.plantTable.find({}, {"description": 1, "_id": 0})
         return [item["description"] for item in result]
     

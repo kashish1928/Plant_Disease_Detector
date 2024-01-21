@@ -3,15 +3,22 @@ from taipy.gui import Gui, State, notify
 import taipy.gui.builder as tgb
 import openai
 from PIL import Image
-from io import BytesIO
+import io
 import base64
 import plantDiseaseQuery
+import matplotlib.pyplot as plt
 
 #initialize variables
 
 
 #context for gpt
 context = ""
+
+#Plant Dashboard vars
+plant_name = ""
+Common_Name = ""
+Healthy = ""
+Chance = ""
 
 # initialised dictionary storing the conversation history
 conversation = {
@@ -104,10 +111,34 @@ stylekit = {
 }
 
 pdq = plantDiseaseQuery.plantDiseaseQuery()
-plants = pdq.get_db_plantName()
-value = plants[0]
+plants = pdq.get_plant_id_name()
+value = None
 
+def UpdateImage(state:State) -> None:
+    image_resize()
+    pil_img = Image.open("src/saved/fixed_img.png")
+    image_bytes = io.BytesIO()
+    pil_img.save(image_bytes, format='JPEG')
+    image = image_bytes.getvalue()
+    state.current_image = image
 
+def UpdateDashboard(state:State, plant:dict) -> None:
+    # print(plant)
+    state.plant_name = plant['plantName']
+    state.Common_Name = state.Common_Name = ", ".join([plant['commonName']] if isinstance(plant['commonName'], str) else plant['commonName'])
+
+    state.Healthy = "Sick 😷" if plant['hasDisease'] == False else "Healthy 💪"
+    state.Chance = str(plant['probability'])
+
+def getPlantInfo(state : State, var_name : str, value : any) -> None:
+    print("A plant has been selected")
+    print(value)
+    plant = pdq.get_plant_by_id(value[0][0])
+    pil_img = Image.open(io.BytesIO(plant['image']))
+    pil_img.save("src/saved/fixed_img.png")
+    UpdateImage(state)
+    UpdateDashboard(state,plant)
+    
 
 
 logo = "images/logo.png"
@@ -123,9 +154,10 @@ page = """
 <|{logo}|image|width = 275px|>
 <br/>
 <br/>
+
 <br/>
 <br/>
-<|{value}|selector|lov={plants}|multiple|filter|width = 400|>
+<|{value}|selector|lov={plants}|multiple|filter|width = 400|on_change=getPlantInfo|>
 |>
 
 <|part|render=True|class_name=dashboard|
@@ -134,16 +166,16 @@ page = """
 <|part|render=True|class_name=plant_info|
 <|card card-bg|
 Plant Name:
-
+<|{plant_name}|>
 <br/>
 Common Names:
-
+<|{Common_Name}|>
 <br/>
 Healthy?
-
+<|{Healthy}|>
 <br/>
 Chance of Disease:
-
+<|{Chance}|>
 |>
 
 |>
@@ -168,4 +200,4 @@ Chance of Disease:
 
 #To run the application
 if __name__ == "__main__":
-    Gui(page).run(title="Taipy Chat", use_reloader=True, stylekit = stylekit, port = 5001)
+    Gui(page).run(title="Plant Whisperer", use_reloader=True, stylekit = stylekit, port = 5001)
