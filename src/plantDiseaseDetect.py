@@ -2,6 +2,11 @@
 import pymongo
 import plant_id
 import json
+from pymongo import MongoClient
+from PIL import Image
+import io
+from bson.binary import Binary
+import matplotlib.pyplot as plt
 
 # STEP 2 : Create a mongodb client
 conn_str = "mongodb+srv://kashishjoshipura:ubc2026@cluster0.cty5my6.mongodb.net/?retryWrites=true&w=majority"
@@ -22,13 +27,20 @@ plantTable = myDb["plantTable"]
 # STEP 5 : Create a document/record
 
 # Opening JSON file
-f = open('../data/data.json')
+f = open('./data/data.json')
  
 # returns JSON object as 
 # a dictionary
 file_path = json.load(f)
 
 f.close()
+
+im = Image.open("src/images/test.jpg")
+
+image_bytes = io.BytesIO()
+im.save(image_bytes, format='JPEG')
+
+image = image_bytes.getvalue()
 
 identification = file_path["Identification"]
 print(type(identification))
@@ -44,7 +56,8 @@ myPlant = {
     "description":aPlant.get_disease_description(file_path["health"]),
     "chemicalTreatment":aPlant.get_disease_chemical_treatment(file_path["health"]),
     "biologicalTreatment":aPlant.get_disease_biological_treatment(file_path["health"]),
-    "prevention":aPlant.get_disease_prevention(file_path["health"])
+    "prevention":aPlant.get_disease_prevention(file_path["health"]),
+    "image":image
 }
 
 # STEP 6 : Insert the document
@@ -53,3 +66,7 @@ res = plantTable.insert_one(myPlant)
 # STEP 7 : Read the document
 record = plantTable.find_one()
 print(record)
+
+pil_img = Image.open(io.BytesIO(record['image']))
+plt.imshow(pil_img)
+plt.show()
