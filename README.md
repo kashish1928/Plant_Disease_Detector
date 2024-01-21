@@ -23,13 +23,13 @@ Crop diseases pose a significant threat to global food security, especially in r
 1. **Clone the repository**
   
 ```terminal
-git clone https://github.com/your-username/plant-disease-detection.git
+git clone https://github.com/kashish1928/Plant-Disease-Detection.git
 ```
 
 2. **Navigate to project directory**
 
 ```terminal
-cd plant-disease-detection
+cd Plant-Disease-Detection
 ```
 
 3. **Install dependencies**
