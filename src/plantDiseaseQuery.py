@@ -1,6 +1,11 @@
 import pymongo
 import plant_id
 import json
+from pymongo import MongoClient
+from PIL import Image
+import io
+from bson.binary import Binary
+import matplotlib.pyplot as plt
 
 class plantDiseaseQuery:
     def __init__(self):
@@ -35,7 +40,8 @@ class plantDiseaseQuery:
             "description":aPlant.get_disease_description(health),
             "chemicalTreatment":aPlant.get_disease_chemical_treatment(health),
             "biologicalTreatment":aPlant.get_disease_biological_treatment(health),
-            "prevention":aPlant.get_disease_prevention(health)
+            "prevention":aPlant.get_disease_prevention(health),
+            "image":aPlant.get_disease_image(identification)
         }
         res = self.plantTable.insert_one(myPlant)
 
@@ -82,3 +88,7 @@ class plantDiseaseQuery:
     def get_db_prevention(self):
         result = self.plantTable.find({}, {"prevention": 1, "_id": 0})
         return [item["prevention"] for item in result]
+    
+    def get_db_image(self):
+        result = self.plantTable.find({}, {"image": 1, "_id": 0})
+        return [item["image"] for item in result]

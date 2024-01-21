@@ -92,6 +92,9 @@ class Plant_ID:
     
     def get_disease_prevention(self,health):
         return health['result']['disease']['suggestions'][0]['details']['treatment']['prevention']
+    
+    def get_disease_image(self,identification):
+        return identification['input']['images'][0]
 
 
     
