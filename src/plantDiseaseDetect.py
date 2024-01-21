@@ -9,7 +9,7 @@ from bson.binary import Binary
 import matplotlib.pyplot as plt
 
 # STEP 2 : Create a mongodb client
-conn_str = "mongodb+srv://kashishjoshipura:ubc2026@cluster0.cty5my6.mongodb.net/?retryWrites=true&w=majority"
+conn_str = "CONNECTION TO YOUR MONGODB SERVER"
 try:
     client = pymongo.MongoClient(conn_str)
 except Exception:

@@ -44,7 +44,7 @@ def image_resize():
 image_resize()
 
 #api call
-client = openai.Client(api_key="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")
+client = openai.Client(api_key="YOUR OPEN AI KEY")
 
 
 #functions to api

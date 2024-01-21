@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 class plantDiseaseQuery:
     def __init__(self):
-        conn_str = "mongodb+srv://kashishjoshipura:ubc2026@cluster0.cty5my6.mongodb.net/?retryWrites=true&w=majority"
+        conn_str = "CONNECTION TO YOUR MONGODB SERVER"
         try:
             client = pymongo.MongoClient(conn_str)
         except Exception:
