@@ -18,12 +18,16 @@ conversation = {
     "Conversation": ["I've just adopted a plant", "Hi! I can take a look at it and tell you about it."]
 }
 
-#message that user will type
 current_image = "src/saved/fixed_img.png"
-image = Image.open(current_image)
-new_image = image.resize((500, 500))
-new_image.save(current_image)
 
+#message that user will type
+def image_resize():
+    current_image = "src/saved/fixed_img.png"
+    image = Image.open(current_image)
+    new_image = image.resize((1000, 1000))
+    new_image.save(current_image)
+
+image_resize()
 #api call
 client = openai.Client(api_key="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")
 
@@ -65,13 +69,13 @@ def request4(state: State, prompt: str) -> str:
 def send_image(state: State) -> None:
     image = Image.open(state.current_image)
     image.save("src/saved/fixed_img.png")
-    
+    image_resize()
+
     with open(state.current_image, "rb") as image_file:
         base64_image = base64.b64encode(image_file.read()).decode('utf-8')
         
      # Add the user's message to the context
     state.context += f"Human: GPT, your task is to identify the type of plant and identify that plant health issues with precision. If a condition is unrecognizable, reply with \'I don\'t know\'. Analyze any image of a plant or leaf I provide, and detect all abnormal conditions, whether they are diseases, pests, deficiencies, or decay. Respond strictly with the name of the condition identified, and nothing else—no explanations, no additional text. If a condition is unrecognizable, reply with \'I don\'t know\'. If the image is not plant-related, say \'Please pick another image\n ' \n\n AI:"
-    image.show()
     
     # Send the user's message to the API and get the response
     answer = request4(state, base64_image).replace("\n", "")
