@@ -10,20 +10,20 @@ import matplotlib.pyplot as plt
 
 #initialize variables
 
-
-#context for gpt
-context = ""
-
 #Plant Dashboard vars
 plant_name = ""
 Common_Name = ""
 Healthy = ""
 Chance = ""
 
-# initialised dictionary storing the conversation history
+
+# initialised dictionary and context storing the conversation history
+context = f"I've just adopted a plant and it's name is {plant_name}"
 conversation = {
-    "Conversation": ["I've just adopted a plant", "Hi! I can take a look at it and tell you about it."]
+    "Conversation": [f"I've just adopted a plant and it's name is {plant_name}. I would like to know more about it", "Hi! I can take a look at it and tell you about it."]
 }
+current_user_message = ""
+past_conversations = []
 
 current_image = "src/saved/fixed_img.png"
 
@@ -35,11 +35,12 @@ def image_resize():
     new_image.save(current_image)
 
 image_resize()
+
 #api call
 client = openai.Client(api_key="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")
 
 
-#functions
+#functions to api
 
 def request4(state: State, prompt: str) -> str:
     """
@@ -71,7 +72,55 @@ def request4(state: State, prompt: str) -> str:
     )
     return response.choices[0].message.content
 
-    
+def request3(state: State, prompt: str) -> str:
+    """
+    Send a prompt to the GPT-3 API and return the response.
+
+    Args:
+        - state: The current state of the app.
+        - prompt: The prompt to send to the API.
+
+    Returns:
+        The response from the API.
+    """
+    response = state.client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": f"{prompt}",
+            }
+        ],
+        model="gpt-3.5-turbo",
+    )
+    return response.choices[0].message.content
+
+def update_context(state: State) -> None:
+    """
+    Update the context with the user's message and the AI's response.
+
+    Args:
+        - state: The current state of the app.
+    """
+    state.context += f"Human: \n {state.current_user_message}\n\n AI:"
+    answer = request3(state, state.context).replace("\n", "")
+    state.context += answer
+
+    return answer
+
+def send_message(state: State) -> None:
+    """
+    Send the user's message to the API and update the context.
+
+    Args:
+        - state: The current state of the app.
+    """
+    notify(state, "info", "Sending to GPT")
+    answer = update_context(state)
+    conv = state.conversation._dict.copy()
+    conv["Conversation"] += [state.current_user_message, answer]
+    state.current_user_message = ""
+    state.conversation = conv
+    notify(state, "success", "Response sent to GPT!")
     
 def send_image(state: State) -> None:
     image = Image.open(state.current_image)
@@ -94,11 +143,31 @@ def send_image(state: State) -> None:
     conv["Conversation"] += ["Based on the image this is my answer:", answer]
     state.conversation = conv
     
-
+#clear the chat
 def clear_history(state: State) -> None:
-    state.conversation = {"Conversation": []}
-    state.context = "GPT, your task is to identify the type of plant and identify that plant health issues with precision. If a condition is unrecognizable, reply with \'I don\'t know\'. Analyze any image of a plant or leaf I provide, and detect all abnormal conditions, whether they are diseases, pests, deficiencies, or decay. Respond strictly with the name of the condition identified, and nothing else—no explanations, no additional text. If a condition is unrecognizable, reply with \'I don\'t know\'. If the image is not plant-related, say \'Please pick another image\""
+    state.conversation = {"Conversation": [f"I've just adopted a plant and it's name is {state.plant_name} I would like to know more about it", "Hi! I can take a look at it and tell you about it."]}
+    state.context = f"GPT, your task is to tell me more about the health and care of my plant whose name is {state.plant_name}"
 
+#style
+def style_conv(state: State, idx: int, row: int) -> str:
+    """
+    Apply a style to the conversation table depending on the message's author.
+
+    Args:
+        - state: The current state of the app.
+        - idx: The index of the message in the table.
+        - row: The row of the message in the table.
+
+    Returns:
+        The style to apply to the message.
+    """
+    if idx is None:
+        return None
+    elif idx % 2 == 0:
+        return "user_message"
+    else:
+        return "gpt_message"
+    
 stylekit = {
   "color_primary": "#BADA55",
   "color_secondary": "#C0FFE",
@@ -109,6 +178,8 @@ stylekit = {
   "font_family" : "Lato, Arial, sans-serif",
 
 }
+
+#plant functions
 
 pdq = plantDiseaseQuery.plantDiseaseQuery()
 plants = pdq.get_plant_id_name()
@@ -129,7 +200,12 @@ def UpdateDashboard(state:State, plant:dict) -> None:
 
     state.Healthy = "Sick 😷" if plant['hasDisease'] == False else "Healthy 💪"
     state.Chance = str(plant['probability'])
-
+    state.context += f"I've adopted a plant named {state.plant_name} it's common name is {state.Common_Name} that is currently {state.Healthy} with chance of diseases {state.Chance}. Can you help me answer a few questions about it?"
+    
+    conv = state.conversation._dict.copy()
+    conv["Conversation"] = [f"I've just adopted a plant and it's name is {state.plant_name}. I would like to know more about it", "Hi! I can take a look at it and tell you about it."]
+    state.conversation = conv
+    
 def getPlantInfo(state : State, var_name : str, value : any) -> None:
     print("A plant has been selected")
     print(value)
@@ -141,23 +217,23 @@ def getPlantInfo(state : State, var_name : str, value : any) -> None:
     
 
 
-logo = "images/logo.png"
+logo = "src/images/logo.png"
 #USER INTERFACE
 
 page = """
 <|toggle|theme|>
    
    
-<|layout|columns=350px 1|
+<|layout|columns=1 5|
 
-<|sidebar|align-item-center|
-<|{logo}|image|width = 275px|>
+<|sidebar|
+<|{logo}|image|width = 255px|>
 <br/>
 <br/>
 
 <br/>
 <br/>
-<|{value}|selector|lov={plants}|multiple|filter|width = 400|on_change=getPlantInfo|>
+<|{value}|selector|lov={plants}|multiple|filter|width = 100%|on_change=getPlantInfo|>
 |>
 
 <|part|render=True|class_name=dashboard|
@@ -184,13 +260,12 @@ Chance of Disease:
 <|{current_image}|image|width=100%|>
 |>
 |>
-<|part|render=True|class_name=plant_info|
-<|{conversation}|table|style=style_conv|show_all|height=1000px|width=100%|rebuild|>
-|>
 
 
 <|part|render=True|class_name=plant_upload align-item-bottom table|
-<|{conversation}|table|style=style_conv|show_all|width=100%|rebuild|>
+<|{conversation}|table|style=style_conv|show_all|width=100%|height = 250px|rebuild|>
+<|{current_user_message}|input|label= Ask GPT here...|on_action=send_message|class_name=fullwidth|>
+
 <|{current_image}|file_selector|on_action=send_image|extensions=.png,.jpg,.jpeg|label=Add the image of plant here|>
 <|Clear History|button|class_name=clear|on_action=clear_history|>
 |>

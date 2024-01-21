@@ -1,30 +1,30 @@
 body {
     overflow: hidden;
   }
-  
+
   .gpt_message td  {
-      margin-left: 30px;
-      margin-bottom: 20px;
-      margin-top: 20px;
+      margin-left: 3px;
+      margin-bottom: 3px;
+      margin-top: 3px;
       position: relative;
       display: inline-block;
-      padding: 20px;
-      background-color: black;
-      border-radius: 20px;
+      padding: 10px;
+      background-color: green;
+      border-radius: 10px;
       max-width: 80%;
       box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
       font-size: large;
   }
   
   .user_message td  {
-      margin-right: 30px;
-      margin-bottom: 20px;
-      margin-top: 20px;
+      margin-right: 3px;
+      margin-bottom: 3px;
+      margin-top: 3px;
       position: relative;
       display: inline-block;
-      padding: 20px;
+      padding: 10px;
       background-color: #140a1e;
-      border-radius: 20px;
+      border-radius: 10px;
       max-width: 80%;
       /* float: right; */
       box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
