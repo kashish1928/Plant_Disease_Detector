@@ -8,6 +8,7 @@ import base64
 import plantDiseaseQuery
 import matplotlib.pyplot as plt
 import plant_id
+import pandas as pd
 
 #initialize variables
 
@@ -26,12 +27,12 @@ Prevention = ""
 # initialised dictionary and context storing the conversation history
 context = f"I've just adopted a plant and it's name is {plant_name}"
 conversation = {
-    "Conversation": [f"I've just adopted a plant and it's name is {plant_name}. I would like to know more about it", "Hi! I can take a look at it and tell you about it."]
+    "Conversation": [f"I've just adopted a plant and I would like to know more about it", "Hi! I can take a look at it and tell you about it."]
 }
 current_user_message = ""
 past_conversations = []
 
-current_image = "src/saved/fixed_img.png"
+current_image = "src/images/template.png"
 
 #message that user will type
 def image_resize():
@@ -217,7 +218,7 @@ def UpdateDashboard(state:State, plant:dict) -> None:
     state.Chemical_Treatment = plant['chemicalTreatment']
     state.Biological_Treatment = plant['biologicalTreatment']
     state.Prevention = plant['prevention']
-    state.context += f"I've adopted a plant named {state.plant_name} it's common name is {state.Common_Name} that is currently {state.Healthy} with chance of diseases {state.Chance}. Can you help me answer a few questions about it?"
+    state.context = f"I've adopted a plant named {state.plant_name} it's common name is {state.Common_Name} that is currently {state.Healthy} with chance of diseases {state.Chance}. Can you help me answer a few questions about it?"
     
     conv = state.conversation._dict.copy()
     conv["Conversation"] = [f"I've just adopted a plant and it's name is {state.plant_name}. I would like to know more about it", "Hi! I can take a look at it and tell you about it."]
@@ -233,7 +234,6 @@ def getPlantInfo(state : State, var_name : str, value : any) -> None:
     pil_img.save("src/saved/fixed_img.png")
     UpdateImage(state)
     UpdateDashboard(state,plant)
-    
 
 
 logo = "src/images/logo.png"
@@ -258,33 +258,34 @@ page = """
 
 <|part|render=True|class_name=dashboard|
 ## 🌱 Plant *Dashboard*{: .color-primary}
-<|2 1|layout|margin=0.5rem
-<|part|render=True|class_name=plant_info|
+<|2 1|layout|
+<|part|render=True|class_name=plant_info|id = part
+
 <|card card-bg|
 **Plant Name:**
 <|{plant_name}|>
-<br/>
+<br/><br/>
 **Common Names:**
 <|{Common_Name}|>
-<br/>
+<br/><br/>
 **Healthy?**
 <|{Healthy}|>
-<br/>
+<br/><br/>
 **Chance of Disease:**
 <|{Chance}|>
-<br/>
+<br/><br/>
 **Disease Name:**
 <|{Disease_Name}|>
-<br/>
+<br/><br/>
 **Disease Description:**
 <|{Disease_Description}|>
-<br/>
+<br/><br/>
 **Chemical Treatment:**
 <|{Chemical_Treatment}|>
-<br/>
+<br/><br/>
 **Biological Treatment:**
 <|{Biological_Treatment}|>
-<br/>
+<br/><br/>
 **Prevention:**
 <|{Prevention}|>
 <br/>
@@ -298,9 +299,9 @@ page = """
 
 |>
 
-
+<br/>
 <|part|render=True|class_name=plant_upload align-item-bottom table|
-<|{conversation}|table|style=style_conv|show_all|width=100%|height = 250px|rebuild|>
+<|{conversation}|table|style=style_conv|show_all|width=100%|height = 200px|rebuild|>
 <|{current_user_message}|input|label= Ask GPT here...|on_action=send_message|class_name=fullwidth|>
 <|Clear History|button|class_name=clear|on_action=clear_history|>
 |>
