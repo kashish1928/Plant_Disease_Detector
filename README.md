@@ -1,5 +1,9 @@
 # Plant Whisperer
-<img src="src/images/template.png" style="width:400px; height:400px;" />
+<div style="text-align: center;">
+  <img src="src/images/template.png" style="width: 400px; height: 400px; margin: 0 auto;" />
+</div>
+
+
 ## Overview
 Crop diseases pose a significant threat to global food security, especially in regions lacking proper infrastructure for rapid disease identification. To address this challenge, we present a web application that leverages the widespread adoption of smartphones and cutting-edge transfer learning models. Our solution aims to streamline the process of crop disease diagnosis, providing users with insights into disease types, suitable treatments, and preventive measures.
 
