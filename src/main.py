@@ -9,6 +9,7 @@ import plantDiseaseQuery
 import matplotlib.pyplot as plt
 import plant_id
 import pandas as pd
+import config
 
 #initialize variables
 
@@ -44,7 +45,7 @@ def image_resize():
 image_resize()
 
 #api call
-client = openai.Client(api_key="YOUR OPEN AI KEY")
+client = openai.Client(api_key=config.OPEN_AI_KEY)
 
 
 #functions to api

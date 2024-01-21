@@ -1,8 +1,9 @@
 import base64
 import requests
 import json
+import config
 
-API_KEY = 'YOUR PLANTID KEY'
+API_KEY = config.PLANT_ID_KEY
 
 class Plant_ID:
     def __init__(self):

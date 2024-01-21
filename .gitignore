@@ -162,3 +162,4 @@ cython_debug/
 .vscode
 .taipy
 .DS_Store
+src/config.py

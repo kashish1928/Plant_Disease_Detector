@@ -6,10 +6,11 @@ from PIL import Image
 import io
 from bson.binary import Binary
 import matplotlib.pyplot as plt
+import config
 
 class plantDiseaseQuery:
     def __init__(self):
-        conn_str = "CONNECTION TO YOUR MONGODB SERVER"
+        conn_str = config.MONGO_DB_CURR
         try:
             client = pymongo.MongoClient(conn_str)
         except Exception:
