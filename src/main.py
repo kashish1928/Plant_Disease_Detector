@@ -5,8 +5,10 @@ import openai
 from PIL import Image
 from io import BytesIO
 import base64
+import plantDiseaseQuery
 
 #initialize variables
+
 
 #context for gpt
 context = ""
@@ -17,7 +19,10 @@ conversation = {
 }
 
 #message that user will type
-current_image = ""
+current_image = "src/saved/fixed_img.png"
+image = Image.open(current_image)
+new_image = image.resize((500, 500))
+new_image.save(current_image)
 
 #api call
 client = openai.Client(api_key="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")
@@ -59,7 +64,7 @@ def request4(state: State, prompt: str) -> str:
     
 def send_image(state: State) -> None:
     image = Image.open(state.current_image)
-    image.save("saved/fixed_img.png")
+    image.save("src/saved/fixed_img.png")
     
     with open(state.current_image, "rb") as image_file:
         base64_image = base64.b64encode(image_file.read()).decode('utf-8')
@@ -90,27 +95,52 @@ stylekit = {
   "color_background_light" : "#F0F5F7",
   "color_background_dark": "#152335",
   
-  "font_family" : "Lato, Arial, sans-serif"
+  "font_family" : "Lato, Arial, sans-serif",
+
 }
+
+pdq = plantDiseaseQuery.plantDiseaseQuery()
+plants = pdq.get_db_plantName()
+value = plants[0]
+
+logo = "images/logo.png"
 #USER INTERFACE
 
 page = """
 <|toggle|theme|>
    
    
-<|layout|columns=450px 1|
-<|part|render=True|class_name=sidebar|
+<|layout|columns=350px 1|
+
+<|sidebar|align-item-center|
+<|{logo}|image|width = 275px|>
+<br/>
+<br/>
+<br/>
+<br/>
+<|{value}|selector|lov={plants}|multiple|filter|width = 400|>
 |>
 
-<|part|render=True|class_name=p2|
-## Plant **Dashboard**
-<|card| 400px 1|
-**Dashboard2**
-<|part|render=True|class_name=conversation|
-<|{conversation}|table|style=style_conv|show_all|width=100%|rebuild|>
-<|{current_image}|file_selector|label=Add the image of plant here|on_action=send_image|extensions=.png,.jpg,.jpeg|class_name=fullwidth|>
-<|Clear History|button|class_name=clear|on_action=clear_history|>
+<|part|render=True|class_name=dashboard|
+## 🌱 Plant *Dashboard*{: .color-primary}
+<|2 1|layout|margin=0.5rem
+<|part|render=True|class_name=plant_info|
+<|{conversation}|table|style=style_conv|show_all|height=1000px|width=100%|rebuild|>
 |>
+
+<|part|render=True|class_name=plant_photo|
+<|{current_image}|image|width=100%|>
+|>
+|>
+<|part|render=True|class_name=plant_info|
+<|{conversation}|table|style=style_conv|show_all|height=1000px|width=100%|rebuild|>
+|>
+
+
+<|part|render=True|class_name=plant_upload align-item-bottom table|
+<|{conversation}|table|style=style_conv|show_all|width=100%|rebuild|>
+<|{current_image}|file_selector|on_action=send_image|extensions=.png,.jpg,.jpeg|label=Add the image of plant here|>
+<|Clear History|button|class_name=clear|on_action=clear_history|>
 |>
 |>
 |>
@@ -118,5 +148,4 @@ page = """
 
 #To run the application
 if __name__ == "__main__":
-    Gui(page).run(title="Taipy Chat", use_reloader=True, stylekit = stylekit)
-    
+    Gui(page).run(title="Taipy Chat", use_reloader=True, stylekit = stylekit, port = 5001)

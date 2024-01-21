@@ -32,7 +32,7 @@ body {
     }
   
     :root {
-      --element-padding: 1.5rem;
+      --element-padding: 1rem;
     }
     
     #root > .MuiBox-root {
@@ -64,3 +64,11 @@ body {
     .green {
         color: green;
       }
+    
+    .sidebar {
+      align-items: center;
+    }
+
+    /* .taipy-layout {
+      align-items: ;
+    } */
