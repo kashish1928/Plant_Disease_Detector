@@ -103,6 +103,9 @@ pdq = plantDiseaseQuery.plantDiseaseQuery()
 plants = pdq.get_db_plantName()
 value = plants[0]
 
+
+
+
 logo = "images/logo.png"
 #USER INTERFACE
 
@@ -125,7 +128,20 @@ page = """
 ## 🌱 Plant *Dashboard*{: .color-primary}
 <|2 1|layout|margin=0.5rem
 <|part|render=True|class_name=plant_info|
-<|{conversation}|table|style=style_conv|show_all|height=1000px|width=100%|rebuild|>
+<|card card-bg|
+Plant Name:
+
+<br/>
+Common Names:
+
+<br/>
+Healthy?
+
+<br/>
+Chance of Disease:
+
+|>
+
 |>
 
 <|part|render=True|class_name=plant_photo|
