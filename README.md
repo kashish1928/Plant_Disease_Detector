@@ -42,13 +42,17 @@ cd Plant-Disease-Detection
 pip install -r requirements.txt
 ```
 
-4. **Run the program**
+4. **Create config.py file**
+
+We used Plant_ID API as well as Open AI API, so you will need to get their API keys from <a href= https://www.plant.id>here<a/> and <a href = https://openai.com>here<a/> respectively.
+
+5. **Run the program**
 
 ```terminal
 python src/main.py
 ```
 
-5. **Access the webapp**
+6. **Access the webapp**
 
 Open a web browser and go to `http://127.0.0.1:5001/`
 
