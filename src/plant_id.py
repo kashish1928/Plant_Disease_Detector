@@ -1,5 +1,6 @@
 import base64
 import requests
+import json
 
 API_KEY = 'LnlxIxlnhOT7396Rwdz9XZGeakodDd8ibz0dFtdnyjYduOpPci'
 
@@ -16,15 +17,17 @@ class Plant_ID:
         with open(image_path, 'rb') as file:
             images = [base64.b64encode(file.read()).decode('ascii')]
 
-        #Post request to plant.id API
         response_identify = requests.post(
-        'https://api.plant.id/v3/identification',
-        params={'details': 'url,common_names'},
-        headers={'Api-Key': API_KEY},
-        json={'images': images})
+            'https://api.plant.id/v3/identification',
+            params={'details': 'url,common_names'},
+            headers={'Api-Key': API_KEY},
+            json={'images': images},
+        )
 
         #Convert to JSon
-        result = response_identify.json()
+        
+        result = json.loads(response_identify.text)
+
         if result['result']['is_plant']['binary']:
             return result
         else:
@@ -38,20 +41,17 @@ class Plant_ID:
 
         #Post request to plant.id API
         response_health = requests.post(
-        'https://api.plant.id/v3/health_assesment',
+        'https://api.plant.id/v3/health_assessment',
         params={'details': 'description,treatment'},
         headers={'Api-Key': API_KEY},
         json={'images': images},
         )   
 
         #Convert to JSon
-        result = response_health.json()
+        result = json.loads(response_health.text)
 
         if result['result']['is_plant']['binary']:
-            if result['result']['is_healthy']['binary']:
-                return 1
-            else:
-                return result
+            return result
         else:
             return 0
     
@@ -88,8 +88,10 @@ class Plant_ID:
         return health['result']['disease']['suggestions'][0]['details']['treatment']['biological']
     
     def get_disease_chemical_treatment(self,health):
-        return health['result']['disease']['suggestions'][0]['details']['treatment']['chemical']
-    
+        try:
+            return health['result']['disease']['suggestions'][0]['details']['treatment']['chemical']
+        except KeyError:
+            return ["No chemical treatment available"]
     def get_disease_prevention(self,health):
         return health['result']['disease']['suggestions'][0]['details']['treatment']['prevention']
     

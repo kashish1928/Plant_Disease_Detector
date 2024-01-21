@@ -15,6 +15,11 @@ plant_name = ""
 Common_Name = ""
 Healthy = ""
 Chance = ""
+Disease_Name = ""
+Disease_Description = ""
+Chemical_Treatment = ""
+Biological_Treatment = ""
+Prevention = ""
 
 
 # initialised dictionary and context storing the conversation history
@@ -189,7 +194,7 @@ def UpdateImage(state:State) -> None:
     image_resize()
     pil_img = Image.open("src/saved/fixed_img.png")
     image_bytes = io.BytesIO()
-    pil_img.save(image_bytes, format='JPEG')
+    pil_img.save(image_bytes, format='PNG')
     image = image_bytes.getvalue()
     state.current_image = image
 
@@ -200,6 +205,11 @@ def UpdateDashboard(state:State, plant:dict) -> None:
 
     state.Healthy = "Sick 😷" if plant['hasDisease'] == False else "Healthy 💪"
     state.Chance = str(plant['probability'])
+    state.Disease_Name = plant['diseaseName']
+    state.Disease_Description = plant['description']
+    state.Chemical_Treatment = plant['chemicalTreatment']
+    state.Biological_Treatment = plant['biologicalTreatment']
+    state.Prevention = plant['prevention']
     state.context += f"I've adopted a plant named {state.plant_name} it's common name is {state.Common_Name} that is currently {state.Healthy} with chance of diseases {state.Chance}. Can you help me answer a few questions about it?"
     
     conv = state.conversation._dict.copy()
@@ -207,9 +217,11 @@ def UpdateDashboard(state:State, plant:dict) -> None:
     state.conversation = conv
     
 def getPlantInfo(state : State, var_name : str, value : any) -> None:
+    print(value)
     print("A plant has been selected")
     print(value)
-    plant = pdq.get_plant_by_id(value[0][0])
+    plant = pdq.get_plant_by_id(value[0])
+    print(plant.keys())
     pil_img = Image.open(io.BytesIO(plant['image']))
     pil_img.save("src/saved/fixed_img.png")
     UpdateImage(state)
@@ -233,7 +245,7 @@ page = """
 
 <br/>
 <br/>
-<|{value}|selector|lov={plants}|multiple|filter|width = 100%|on_change=getPlantInfo|>
+<|{value}|selector|lov={plants}|multiple = False|filter|width = 100%|on_change=getPlantInfo|>
 |>
 
 <|part|render=True|class_name=dashboard|
@@ -241,17 +253,33 @@ page = """
 <|2 1|layout|margin=0.5rem
 <|part|render=True|class_name=plant_info|
 <|card card-bg|
-Plant Name:
+**Plant Name:**
 <|{plant_name}|>
 <br/>
-Common Names:
+**Common Names:**
 <|{Common_Name}|>
 <br/>
-Healthy?
+**Healthy?**
 <|{Healthy}|>
 <br/>
-Chance of Disease:
+**Chance of Disease:**
 <|{Chance}|>
+<br/>
+**Disease Name:**
+<|{Disease_Name}|>
+<br/>
+**Disease Description:**
+<|{Disease_Description}|>
+<br/>
+**Chemical Treatment:**
+<|{Chemical_Treatment}|>
+<br/>
+**Biological Treatment:**
+<|{Biological_Treatment}|>
+<br/>
+**Prevention:**
+<|{Prevention}|>
+<br/>
 |>
 
 |>

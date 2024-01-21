@@ -26,37 +26,32 @@ plantTable = myDb["plantTable"]
 
 # STEP 5 : Create a document/record
 
-# Opening JSON file
-f = open('./data/data.json')
- 
-# returns JSON object as 
-# a dictionary
-file_path = json.load(f)
+aPlant = plant_id.Plant_ID()
+file_path = "src/images/Healthy.png"
+identification = aPlant.identify_plant(file_path)
+health = aPlant.health_assessment_plant(file_path)
+print(identification)
+print(health)
 
-f.close()
-
-im = Image.open("src/images/test.jpg")
+im = Image.open(file_path)
 
 image_bytes = io.BytesIO()
-im.save(image_bytes, format='JPEG')
+im.save(image_bytes, format='PNG')
 
 image = image_bytes.getvalue()
 
-identification = file_path["Identification"]
-print(type(identification))
-aPlant = plant_id.Plant_ID()
 myPlant = {
     "plantID":aPlant.get_plant_id(identification),
-    "plantName":aPlant.get_plant_name(file_path["Identification"]),
-    "commonName":aPlant.get_plant_common_name(file_path["Identification"]),
-    "url":aPlant.get_plant_url(file_path["Identification"]),
-    "hasDisease": aPlant.get_plant_disease_status(file_path["health"]),
-    "probability":aPlant.get_disease_probability(file_path["health"]),
-    "diseaseName":aPlant.get_disease_name(file_path["health"]),
-    "description":aPlant.get_disease_description(file_path["health"]),
-    "chemicalTreatment":aPlant.get_disease_chemical_treatment(file_path["health"]),
-    "biologicalTreatment":aPlant.get_disease_biological_treatment(file_path["health"]),
-    "prevention":aPlant.get_disease_prevention(file_path["health"]),
+    "plantName":aPlant.get_plant_name(identification),
+    "commonName":aPlant.get_plant_common_name(identification),
+    "url":aPlant.get_plant_url(identification),
+    "hasDisease": aPlant.get_plant_disease_status(health),
+    "probability":aPlant.get_disease_probability(health),
+    "diseaseName":aPlant.get_disease_name(health),
+    "description":aPlant.get_disease_description(health),
+    "chemicalTreatment":aPlant.get_disease_chemical_treatment(health),
+    "biologicalTreatment":aPlant.get_disease_biological_treatment(health),
+    "prevention":aPlant.get_disease_prevention(health),
     "image":image
 }
 
@@ -66,7 +61,3 @@ res = plantTable.insert_one(myPlant)
 # STEP 7 : Read the document
 record = plantTable.find_one()
 print(record)
-
-pil_img = Image.open(io.BytesIO(record['image']))
-plt.imshow(pil_img)
-plt.show()
