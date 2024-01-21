@@ -28,7 +28,15 @@ class plantDiseaseQuery:
         health = file_path["health"]
         aPlant = plant_id.Plant_ID()
 
-    def add_plant(self,aPlant,identification,health):
+    def add_plant(self,aPlant,identification,health, file_path):
+        im = Image.open(file_path)
+
+        image_bytes = io.BytesIO()
+        im.save(image_bytes, format='PNG')
+
+        image = image_bytes.getvalue()
+        im.close()
+        
         myPlant = {
             "plantID":aPlant.get_plant_id(identification),
             "plantName":aPlant.get_plant_name(identification),
@@ -41,7 +49,7 @@ class plantDiseaseQuery:
             "chemicalTreatment":aPlant.get_disease_chemical_treatment(health),
             "biologicalTreatment":aPlant.get_disease_biological_treatment(health),
             "prevention":aPlant.get_disease_prevention(health),
-            "image":aPlant.get_disease_image(identification)
+            "image":image
         }
         res = self.plantTable.insert_one(myPlant)
     

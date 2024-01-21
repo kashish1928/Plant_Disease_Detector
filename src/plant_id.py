@@ -25,7 +25,7 @@ class Plant_ID:
         )
 
         #Convert to JSon
-        
+        print(response_identify.text)
         result = json.loads(response_identify.text)
 
         if result['result']['is_plant']['binary']:
@@ -48,6 +48,7 @@ class Plant_ID:
         )   
 
         #Convert to JSon
+        print(response_health.text)
         result = json.loads(response_health.text)
 
         if result['result']['is_plant']['binary']:

@@ -7,6 +7,7 @@ import io
 import base64
 import plantDiseaseQuery
 import matplotlib.pyplot as plt
+import plant_id
 
 #initialize variables
 
@@ -129,24 +130,30 @@ def send_message(state: State) -> None:
     
 def send_image(state: State) -> None:
     image = Image.open(state.current_image)
-    image.save("src/saved/fixed_img.png")
-    image_resize()
+    # image.save("src/saved/fixed_img.png")
+    # image_resize()
 
-    with open(state.current_image, "rb") as image_file:
-        base64_image = base64.b64encode(image_file.read()).decode('utf-8')
-        
-     # Add the user's message to the context
-    state.context += f"Human: GPT, your task is to identify the type of plant and identify that plant health issues with precision. If a condition is unrecognizable, reply with \'I don\'t know\'. Analyze any image of a plant or leaf I provide, and detect all abnormal conditions, whether they are diseases, pests, deficiencies, or decay. Respond strictly with the name of the condition identified, and nothing else—no explanations, no additional text. If a condition is unrecognizable, reply with \'I don\'t know\'. If the image is not plant-related, say \'Please pick another image\n ' \n\n AI:"
+    aPlant = plant_id.Plant_ID()
+    pdq = plantDiseaseQuery.plantDiseaseQuery()
     
-    # Send the user's message to the API and get the response
-    answer = request4(state, base64_image).replace("\n", "")
+    identification = aPlant.identify_plant(state.current_image)
+    health = aPlant.health_assessment_plant(state.current_image)
+    pdq.add_plant(aPlant,identification,health, state.current_image)
     
-    # Add the response to the context for future messages
-    state.context += answer
-    # Update the conversation
-    conv = state.conversation._dict.copy()
-    conv["Conversation"] += ["Based on the image this is my answer:", answer]
-    state.conversation = conv
+    state.plants = pdq.get_plant_id_name()
+
+    #  # Add the user's message to the context
+    # state.context += f"Human: GPT, your task is to identify the type of plant and identify that plant health issues with precision. If a condition is unrecognizable, reply with \'I don\'t know\'. Analyze any image of a plant or leaf I provide, and detect all abnormal conditions, whether they are diseases, pests, deficiencies, or decay. Respond strictly with the name of the condition identified, and nothing else—no explanations, no additional text. If a condition is unrecognizable, reply with \'I don\'t know\'. If the image is not plant-related, say \'Please pick another image\n ' \n\n AI:"
+    
+    # # Send the user's message to the API and get the response
+    # answer = request4(state, base64_image).replace("\n", "")
+    
+    # # Add the response to the context for future messages
+    # state.context += answer
+    # # Update the conversation
+    # conv = state.conversation._dict.copy()
+    # conv["Conversation"] += ["Based on the image this is my answer:", answer]
+    # state.conversation = conv
     
 #clear the chat
 def clear_history(state: State) -> None:
@@ -221,7 +228,7 @@ def getPlantInfo(state : State, var_name : str, value : any) -> None:
     print("A plant has been selected")
     print(value)
     plant = pdq.get_plant_by_id(value[0])
-    print(plant.keys())
+    print(plant.keys())                                   
     pil_img = Image.open(io.BytesIO(plant['image']))
     pil_img.save("src/saved/fixed_img.png")
     UpdateImage(state)
@@ -242,6 +249,7 @@ page = """
 <|{logo}|image|width = 255px|>
 <br/>
 <br/>
+<|{current_image}|file_selector|on_action=send_image|extensions=.png,.jpg,.jpeg|label=Add a New Plant|>
 
 <br/>
 <br/>
@@ -287,14 +295,13 @@ page = """
 <|part|render=True|class_name=plant_photo|
 <|{current_image}|image|width=100%|>
 |>
+
 |>
 
 
 <|part|render=True|class_name=plant_upload align-item-bottom table|
 <|{conversation}|table|style=style_conv|show_all|width=100%|height = 250px|rebuild|>
 <|{current_user_message}|input|label= Ask GPT here...|on_action=send_message|class_name=fullwidth|>
-
-<|{current_image}|file_selector|on_action=send_image|extensions=.png,.jpg,.jpeg|label=Add the image of plant here|>
 <|Clear History|button|class_name=clear|on_action=clear_history|>
 |>
 |>
