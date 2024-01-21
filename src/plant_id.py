@@ -11,7 +11,7 @@ class Plant_ID:
     INPUT: Path to the image of plant to be identified
     OUTPUT: JSON object containing the result of the identification
     """
-    def identify_plant(image_path):
+    def identify_plant(self,image_path):
         #Encode given image
         with open(image_path, 'rb') as file:
             images = [base64.b64encode(file.read()).decode('ascii')]
@@ -31,7 +31,7 @@ class Plant_ID:
             return 0
 
     
-    def health_assessment_plant(image_path):
+    def health_assessment_plant(self,image_path):
         #Encode given image
         with open(image_path, 'rb') as file:
             images = [base64.b64encode(file.read()).decode('ascii')]
@@ -59,38 +59,38 @@ class Plant_ID:
     INPUT: JSON object containing the result of the identification
     OUTPUT: String Containgin Name of the plant
     """
-    def get_plant_id(identification):
+    def get_plant_id(self,identification):
         return identification['result']['classification']['suggestions'][0]['id']
 
-    def get_plant_name(identification):
+    def get_plant_name(self,identification):
         return identification['result']['classification']['suggestions'][0]['name']
     
-    def get_plant_common_name(identification):
-        return identification['result']['classification']['suggestions'][0]['common_name']
+    def get_plant_common_name(self,identification):
+        return identification['result']['classification']['suggestions'][0]['details']['common_names']
     
     
-    def get_plant_url(identification):
-        return identification['result']['classification']['suggestions'][0]['url']
+    def get_plant_url(self,identification):
+        return identification['result']['classification']['suggestions'][0]['details']['url']
     
-    def get_plant_disease_status(health):
-        return health['result']['binary']
+    def get_plant_disease_status(self,health):
+        return health['result']['is_healthy']['binary']
     
-    def get_disease_probability(health):
+    def get_disease_probability(self,health):
         return health['result']['disease']['suggestions'][0]['probability']
 
-    def get_disease_name(health):
+    def get_disease_name(self,health):
         return health['result']['disease']['suggestions'][0]['name']
 
-    def get_disease_description(health):
+    def get_disease_description(self,health):
         return health['result']['disease']['suggestions'][0]['details']['description']
     
-    def get_disease_biological_treatment(health):
+    def get_disease_biological_treatment(self,health):
         return health['result']['disease']['suggestions'][0]['details']['treatment']['biological']
     
-    def get_disease_chemical_treatment(health):
+    def get_disease_chemical_treatment(self,health):
         return health['result']['disease']['suggestions'][0]['details']['treatment']['chemical']
     
-    def get_disease_prevention(health):
+    def get_disease_prevention(self,health):
         return health['result']['disease']['suggestions'][0]['details']['treatment']['prevention']
 
 
