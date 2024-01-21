@@ -1,10 +1,10 @@
 # Plant Whisperer
 
 ## Overview
-Crop diseases pose a significant threat to global food security, especially in regions lacking proper infrastructure for rapid disease identification. To address this challenge, we present a web application that leverages the widespread adoption of smartphones and cutting-edge computer vision technologies. Our solution aims to streamline the process of crop disease diagnosis, providing users with insights into disease types, suitable treatments, and preventive measures.
+Crop diseases pose a significant threat to global food security, especially in regions lacking proper infrastructure for rapid disease identification. To address this challenge, we present a web application that leverages the widespread adoption of smartphones and cutting-edge transfer learning models. Our solution aims to streamline the process of crop disease diagnosis, providing users with insights into disease types, suitable treatments, and preventive measures.
 
 ## Key Features
-- **Disease Detection:** Our web app employs advanced computer vision algorithms to accurately identify the type of disease affecting plants. Users can upload images of afflicted plants for real-time diagnosis.
+- **Disease Detection:** Our web app employs advanced transfer learning models to accurately identify the type of disease affecting plants. Users can upload images of afflicted plants for real-time diagnosis.
 
 - **Treatment Recommendations:** Beyond disease identification, the app provides actionable insights by recommending suitable treatments for the detected diseases. This feature aids farmers and agricultural practitioners in promptly addressing plant health issues.
 
@@ -15,7 +15,7 @@ Crop diseases pose a significant threat to global food security, especially in r
 ## How it Works ?
 
 - **Image Upload:** Users upload images of plant specimens showing signs of disease through the web interface.
-- **Computer Vision Analysis:** The uploaded images undergo real-time analysis using advanced computer vision algorithms, enabling the accurate identification of diseases.
+- **Computer Vision Analysis:** The uploaded images undergo real-time analysis using advanced transfer learning model, enabling the accurate identification of diseases.
 - **Treatment and Prevention Recommendations:** Once the disease is identified, the web app provides detailed information on suitable treatments and preventive measures, empowering users with actionable insights.
 - **Generative AI Interaction:** Users can engage with generative AI to seek additional information, ask questions, or gain knowledge about plant care beyond disease diagnosis.
 
